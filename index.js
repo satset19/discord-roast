@@ -109,6 +109,8 @@ client.on("interactionCreate", async (interaction) => {
         }
       });
     }
+
+    // console.log("Generating roast...", userData);
     const { text: roast, nickname } = await roastService.generateRoast(
       userData,
       roaster?.user?.username || "Anonymous"
