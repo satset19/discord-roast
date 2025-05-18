@@ -44,8 +44,6 @@ client.on("interactionCreate", async (interaction) => {
       ? interaction.user.id
       : interaction.options.getUser("target").id
   );
-  // console.log("User data:", member);
-  //
   let roaster;
   try {
     roaster =
