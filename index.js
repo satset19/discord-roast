@@ -2,6 +2,7 @@ const {
   Client,
   GatewayIntentBits,
   PermissionsBitField,
+  Partials,
 } = require("discord.js");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
@@ -13,7 +14,9 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildPresences,
   ],
+  partials: [Partials.User, Partials.Message, Partials.GuildMember],
 });
 
 const TOKEN = process.env.DISCORD_TOKEN;
