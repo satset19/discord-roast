@@ -65,7 +65,7 @@ module.exports = {
 
       console.log("Using topic:", topic);
       const roast = await roastService.generateRoast(userData, topic);
-      await interaction.reply(roast.text);
+      await interaction.reply(`${interaction.user} ${roast.text}`);
     } catch (error) {
       console.error("Error executing roast command:", error);
       await interaction.reply("Failed to roast user. Please try again later.");

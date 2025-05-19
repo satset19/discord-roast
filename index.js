@@ -176,7 +176,7 @@ client.on("interactionCreate", async (interaction) => {
         replyContent = `<@${interaction.user.id}>, ${roast}`;
         break;
       case "roast":
-        replyContent = roast;
+        replyContent = `<@${member.id}>, ${roast}`;
         break;
       default:
         replyContent = roast;

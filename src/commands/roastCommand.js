@@ -22,6 +22,6 @@ module.exports = {
     };
 
     const roast = await roastService.generateRoast(userData);
-    await interaction.reply(roast);
+    await interaction.reply(`${interaction.user} ${roast.text}`);
   },
 };

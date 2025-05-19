@@ -36,7 +36,7 @@ class RoastService {
       );
 
       return {
-        text: `<@${userData.userId}> ${roastText}`,
+        text: roastText,
         nickname: nicknameMatch ? nicknameMatch[1] : null,
       };
     } catch (error) {
