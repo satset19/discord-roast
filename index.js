@@ -23,20 +23,22 @@ const TOKEN = process.env.DISCORD_TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
 // console.log("Starting bot...", TOKEN, CLIENT_ID);
 
-const commandLoader = require("./src/utils/commandLoader");
+// Removed commandLoader as it's no longer needed
 
-client.on("ready", () => {
+client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
-});
 
-client.on("guildCreate", async (guild) => {
+  // Set initial model
+  const initialModel = "qwen"; // Change this to switch models
   try {
-    await commandLoader.deployCommands(guild.id);
-    console.log(`Joined new guild: ${guild.name} (${guild.id})`);
+    roastService.setModel(initialModel);
+    console.log(`Set initial model to ${initialModel}`);
   } catch (error) {
-    console.error(`Failed to deploy commands to new guild ${guild.id}:`, error);
+    console.error("Failed to set initial model:", error.message);
   }
 });
+
+// Removed guildCreate handler as commands are now global
 
 client.on("interactionCreate", async (interaction) => {
   // console.log("Interaction received:", interaction);

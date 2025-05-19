@@ -1,30 +1,27 @@
-const axios = require("axios");
+const modelService = require("./modelService");
 const config = require("../config");
 
 class RoastService {
   constructor() {
-    this.deepseekConfig = config.deepseek;
+    const defaultModel = Object.keys(config)[0] || "qwen";
+    this.model = defaultModel;
+    console.log(`RoastService initialized with model: ${this.model}`);
+  }
+
+  setModel(model) {
+    if (!config[model]) throw new Error(`Model ${model} not configured`);
+    this.model = model;
   }
 
   async generateRoast(userData, roaster, topic = null) {
     console.log("Generating roast with roaster:", roaster, "and topic:", topic);
     try {
       const prompt = this.createRoastPrompt(userData, roaster, topic);
-      const response = await axios.post(
-        this.deepseekConfig.endpoint,
-        {
-          model: this.deepseekConfig.model,
-          messages: [{ role: "user", content: prompt }],
-          temperature: this.deepseekConfig.temperature,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${this.deepseekConfig.apiKey}`,
-            "Content-Type": "application/json",
-          },
-        }
+
+      const responseText = await modelService.generateResponse(
+        this.model,
+        prompt
       );
-      const responseText = response.data.choices[0].message.content;
       // Check if response contains a nickname suggestion (format: "Nickname: xxx")
       const nicknameMatch = responseText.match(/Nickname:\s*(.+)/i);
       const roastText = responseText.replace(/Nickname:\s*.+/i, "").trim();
@@ -40,7 +37,7 @@ class RoastService {
         nickname: nicknameMatch ? nicknameMatch[1] : null,
       };
     } catch (error) {
-      console.error("DeepSeek API error:", error);
+      console.error("Model API error:", error);
       return {
         text: "Maaf, aku sedang tidak bisa membuat roast. Coba lagi nanti ya!",
         nickname: null,

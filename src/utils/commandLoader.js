@@ -4,22 +4,7 @@ const path = require("path");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 
-const deployCommands = async (guildId) => {
-  const commands = loadCommands();
-  const rest = new REST({ version: "9" }).setToken(process.env.DISCORD_TOKEN);
-
-  try {
-    console.log(`Deploying commands to guild ${guildId}`);
-    await rest.put(
-      Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId),
-      { body: commands }
-    );
-    console.log(`Successfully deployed commands to guild ${guildId}`);
-  } catch (error) {
-    console.error(`Failed to deploy commands to guild ${guildId}:`, error);
-    throw error;
-  }
-};
+// Removed per-guild command deployment
 
 const loadCommands = () => {
   const commands = [];
@@ -52,5 +37,4 @@ const loadCommands = () => {
 
 module.exports = {
   loadCommands,
-  deployCommands,
 };

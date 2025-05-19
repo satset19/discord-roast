@@ -9,4 +9,11 @@ module.exports = {
     model: "deepseek-chat",
     temperature: 0.9,
   },
+  qwen: {
+    apiKey: process.env.QWEN_API_KEY,
+    baseURL: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    model: "qwen-max",
+    temperature: 0.9,
+    stream: true,
+  },
 };

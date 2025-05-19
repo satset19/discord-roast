@@ -12,17 +12,7 @@ const client = new Client({
   ],
 });
 
-// Load all command handlers
-const commands = {};
-const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs
-  .readdirSync(commandsPath)
-  .filter((file) => file.endsWith(".js"));
-
-for (const file of commandFiles) {
-  const command = require(path.join(commandsPath, file));
-  commands[command.data.name] = command;
-}
+// Commands are now loaded globally via deploy-commands.js
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
@@ -35,6 +25,11 @@ client.on("interactionCreate", async (interaction) => {
   if (!command) return;
 
   try {
+    // Set default model
+    const model = "deepseek"; // Change this to switch models
+    console.log("Model set to:", model);
+    roastService.setModel(model);
+
     await command.execute(interaction);
   } catch (error) {
     console.error(error);
