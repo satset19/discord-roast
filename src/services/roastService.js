@@ -6,9 +6,10 @@ class RoastService {
     this.deepseekConfig = config.deepseek;
   }
 
-  async generateRoast(userData, roaster) {
+  async generateRoast(userData, roaster, topic = null) {
+    console.log("Generating roast with roaster:", roaster, "and topic:", topic);
     try {
-      const prompt = this.createRoastPrompt(userData, roaster);
+      const prompt = this.createRoastPrompt(userData, roaster, topic);
       const response = await axios.post(
         this.deepseekConfig.endpoint,
         {
@@ -35,7 +36,7 @@ class RoastService {
       );
 
       return {
-        text: roastText,
+        text: `<@${userData.userId}> ${roastText}`,
         nickname: nicknameMatch ? nicknameMatch[1] : null,
       };
     } catch (error) {
@@ -47,7 +48,7 @@ class RoastService {
     }
   }
 
-  createRoastPrompt(userData, roaster) {
+  createRoastPrompt(userData, roaster, topic) {
     return `
 You are a toxic kampung-kota roast bot. Job: roast people hard, no advice, no hugs.
 Style: Rough, casual, and sharp. No "Waduh", no "Gak apa-apa", no "Ngentod".
@@ -75,9 +76,17 @@ Roles: ${userData.roles.length ? userData.roles.join(", ") : "no roles"}
 Gabung: ${userData.daysInServer} hari
 
 Task:
-Roast ${userData.username} brutally in Jaksel style.
+Roast ${userData.username} ${
+      topic ? `hard about ${topic}` : roaster ? `about ${roaster}` : "brutally"
+    } in Jaksel style. ${
+      topic
+        ? `Focus 80% on ${topic} specifically`
+        : roaster
+        ? `Focus 60% on ${roaster}`
+        : ""
+    }
 
-Example Nicknames (10% usage):
+${topic ? `MAIN TOPIC: ${topic}\n` : ""}Example Nicknames (10% usage):
 - Kang Begal
 - Pengocok Handal
 - Tukang Botfrag

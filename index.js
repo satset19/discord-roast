@@ -42,23 +42,43 @@ client.on("interactionCreate", async (interaction) => {
   // console.log("Interaction received:", interaction);
   if (!interaction.isCommand()) return;
 
-  const member = await interaction.guild.members.fetch(
-    interaction.commandName === "roastme"
-      ? interaction.user.id
-      : interaction.options.getUser("target").id
-  );
+  if (!interaction.guild) {
+    return await interaction.reply("This command only works in servers!");
+  }
+
+  let member;
+  // console.log(interaction);
+  try {
+    const targetUserId =
+      interaction.commandName === "roastme"
+        ? interaction.user.id
+        : interaction.options.getUser("user")?.id ||
+          interaction.options.getUser("target")?.id;
+
+    if (!targetUserId) {
+      return await interaction.reply("Could not find target user!");
+    }
+
+    member = await interaction.guild.members.fetch(targetUserId);
+  } catch (error) {
+    console.error("Error fetching target user:", error);
+    return await interaction.reply(
+      "Failed to fetch user data. Please try again later."
+    );
+  }
+
   let roaster;
   try {
-    roaster =
-      interaction.commandName !== "roastme"
-        ? await interaction.guild.members.fetch(interaction.user.id)
-        : null;
+    roaster = ["roast", "startroast"].includes(interaction.commandName)
+      ? await interaction.guild.members.fetch(interaction.user.id)
+      : null;
   } catch (error) {
     console.error("Error fetching roaster:", error);
     roaster = null;
   }
 
   const userData = {
+    userId: member.user.id,
     username: member.user.username,
     avatarURL: member.user.displayAvatarURL(),
     status: member.presence?.status || "offline",
@@ -111,9 +131,15 @@ client.on("interactionCreate", async (interaction) => {
     }
 
     // console.log("Generating roast...", userData);
+    const topic =
+      interaction.commandName === "roast"
+        ? interaction.options.getString("topic") || "general"
+        : null;
+
     const { text: roast, nickname } = await roastService.generateRoast(
       userData,
-      roaster?.user?.username || "Anonymous"
+      roaster?.user?.username || "Anonymous",
+      topic
     );
 
     // Apply nickname if provided and bot has permission
@@ -142,10 +168,18 @@ client.on("interactionCreate", async (interaction) => {
     }
 
     let replyContent;
-    if (interaction.commandName === "startroast") {
-      replyContent = `<@${member.id}>, ${roast}`;
-    } else {
-      replyContent = `<@${interaction.user.id}>, ${roast}`;
+    switch (interaction.commandName) {
+      case "startroast":
+        replyContent = `<@${member.id}>, ${roast}`;
+        break;
+      case "roastme":
+        replyContent = `<@${interaction.user.id}>, ${roast}`;
+        break;
+      case "roast":
+        replyContent = roast;
+        break;
+      default:
+        replyContent = roast;
     }
 
     try {
