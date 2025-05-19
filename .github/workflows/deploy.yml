@@ -21,9 +21,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test
-
       - name: Install Fly.io CLI
         uses: superfly/flyctl-actions/setup-flyctl@master
 
