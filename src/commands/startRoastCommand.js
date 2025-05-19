@@ -11,6 +11,8 @@ module.exports = {
         .setDescription("The user to roast")
         .setRequired(true)
     ),
+
+  // console.log("Roast command interaction received:", interaction);
   async execute(interaction) {
     const target = interaction.options.getUser("target");
     const member = await interaction.guild.members.fetch(target.id);
