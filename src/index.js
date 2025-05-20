@@ -238,21 +238,21 @@ client
     process.exit(1);
   });
 
-// Graceful shutdown
-process.on("SIGTERM", () => {
-  console.log("SIGTERM received. Shutting down gracefully...");
-  client.destroy();
-  server.close(() => {
-    console.log("HTTP server closed");
-    process.exit(0);
-  });
-});
+// // Graceful shutdown
+// process.on("SIGTERM", () => {
+//   console.log("SIGTERM received. Shutting down gracefully...");
+//   client.destroy();
+//   server.close(() => {
+//     console.log("HTTP server closed");
+//     process.exit(0);
+//   });
+// });
 
-process.on("SIGINT", () => {
-  console.log("SIGINT received. Shutting down gracefully...");
-  client.destroy();
-  server.close(() => {
-    console.log("HTTP server closed");
-    process.exit(0);
-  });
-});
+// process.on("SIGINT", () => {
+//   console.log("SIGINT received. Shutting down gracefully...");
+//   client.destroy();
+//   server.close(() => {
+//     console.log("HTTP server closed");
+//     process.exit(0);
+//   });
+// });
