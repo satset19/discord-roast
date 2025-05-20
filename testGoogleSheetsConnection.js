@@ -1,44 +1,57 @@
 require("dotenv").config();
-const { GoogleSpreadsheet } = require("google-spreadsheet");
-const { JWT } = require("google-auth-library");
+const googleSheetService = require("./src/services/googleSheetService");
 
 (async () => {
   try {
-    console.log("Initializing Google Sheets connection...");
+    console.log("=== Testing Google Sheets Connection ===");
 
-    // Verify environment variables
-    if (
-      !process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ||
-      !process.env.GOOGLE_PRIVATE_KEY ||
-      !process.env.GOOGLE_SHEET_ID
-    ) {
-      throw new Error("Missing required Google Sheets credentials in .env");
-    }
+    // Test basic connection
+    await googleSheetService.init();
+    console.log("✅ Basic connection successful");
 
-    // Initialize auth client
-    const serviceAccountAuth = new JWT({
-      email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
+    // Test guild addition
+    const testGuildId = "TEST_" + Date.now();
+    const testGuildName = "Test Guild " + new Date().toISOString();
 
-    // Initialize spreadsheet
-    const doc = new GoogleSpreadsheet(
-      process.env.GOOGLE_SHEET_ID,
-      serviceAccountAuth
+    console.log("\nTesting guild addition...");
+    const added = await googleSheetService.addGuildIfNotExists(
+      testGuildId,
+      testGuildName
+    );
+    console.log(
+      added ? "✅ Guild added successfully" : "❌ Failed to add guild"
     );
 
-    // Load document info
-    await doc.loadInfo();
-    console.log(`Success! Connected to spreadsheet: "${doc.title}"`);
-    console.log(`Sheet count: ${doc.sheetsByIndex.length}`);
+    if (added) {
+      // Verify guild exists
+      console.log("\nVerifying guild exists...");
+      const exists = await googleSheetService.checkGuildExists(testGuildId);
+      console.log(exists ? "✅ Guild found in sheet" : "❌ Guild not found");
+
+      // Cleanup test data
+      console.log("\nCleaning up test data...");
+      const sheetName = process.env.GUILDS_SHEET || "Guilds";
+      const sheet = googleSheetService.doc.sheetsByTitle[sheetName];
+      const rows = await sheet.getRows();
+      const testRow = rows.find((row) => row.get("guild_id") === testGuildId);
+
+      if (testRow) {
+        await testRow.delete();
+        console.log("✅ Test guild removed");
+      } else {
+        console.log("ℹ️ No test guild to remove");
+      }
+    }
+
+    console.log("\n=== All tests completed ===");
   } catch (err) {
-    console.error("Google Sheets connection failed:");
+    console.error("\n❌ Test failed:");
     console.error("- Message:", err.message);
     console.error("- Stack:", err.stack.split("\n")[0]);
 
     if (err.errors) {
       console.error("- API Errors:", err.errors);
     }
+    process.exit(1);
   }
 })();

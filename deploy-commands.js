@@ -67,4 +67,9 @@ async function deployCommands(targetGuildId = null) {
   }
 }
 
-deployCommands();
+module.exports = { deployCommands };
+
+// Only auto-run if executed directly
+if (require.main === module) {
+  deployCommands();
+}

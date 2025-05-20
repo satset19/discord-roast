@@ -13,9 +13,31 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "healthy" });
 });
 
+// Verify required environment variables
+if (!process.env.DISCORD_TOKEN) {
+  console.error("FATAL: DISCORD_TOKEN environment variable is required");
+  process.exit(1);
+}
+
 // Start HTTP server
 const server = app.listen(PORT, () => {
   console.log(`HTTP server running on port ${PORT}`);
+});
+
+// Add startup delay to ensure proper initialization
+let isReady = false;
+setTimeout(() => {
+  isReady = true;
+  console.log("Application fully initialized");
+}, 5000);
+
+// Enhanced health check that verifies Discord connection
+app.get("/health", (req, res) => {
+  if (isReady && client.isReady()) {
+    res.status(200).json({ status: "healthy", discord: "connected" });
+  } else {
+    res.status(503).json({ status: "initializing", discord: "connecting" });
+  }
 });
 
 // Enhanced logger function
@@ -228,31 +250,50 @@ client.on("messageCreate", async (message) => {
   }
 });
 
-client
-  .login(config.discord.token)
-  .then(() => {
+// Initialize Discord client with retry logic
+let discordRetries = 0;
+const maxDiscordRetries = 3;
+
+async function initializeDiscord() {
+  try {
+    console.log("Attempting Discord login...");
+    await client.login(process.env.DISCORD_TOKEN || config.discord.token);
     console.log("Discord client logged in successfully");
-  })
-  .catch((err) => {
-    console.error("Failed to login to Discord:", err);
+  } catch (err) {
+    discordRetries++;
+    if (discordRetries <= maxDiscordRetries) {
+      console.error(
+        `Discord login failed (attempt ${discordRetries}/${maxDiscordRetries}):`,
+        err.message
+      );
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      return initializeDiscord();
+    }
+    console.error("FATAL: Failed to login to Discord after multiple attempts");
     process.exit(1);
+  }
+}
+
+// Start Discord client after short delay to ensure HTTP server is ready
+setTimeout(() => {
+  initializeDiscord();
+}, 1000);
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received. Shutting down gracefully...");
+  client.destroy();
+  server.close(() => {
+    console.log("HTTP server closed");
+    process.exit(0);
   });
+});
 
-// // Graceful shutdown
-// process.on("SIGTERM", () => {
-//   console.log("SIGTERM received. Shutting down gracefully...");
-//   client.destroy();
-//   server.close(() => {
-//     console.log("HTTP server closed");
-//     process.exit(0);
-//   });
-// });
-
-// process.on("SIGINT", () => {
-//   console.log("SIGINT received. Shutting down gracefully...");
-//   client.destroy();
-//   server.close(() => {
-//     console.log("HTTP server closed");
-//     process.exit(0);
-//   });
-// });
+process.on("SIGINT", () => {
+  console.log("SIGINT received. Shutting down gracefully...");
+  client.destroy();
+  server.close(() => {
+    console.log("HTTP server closed");
+    process.exit(0);
+  });
+});
