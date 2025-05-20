@@ -1,7 +1,22 @@
+const express = require("express");
 const { Client, GatewayIntentBits } = require("discord.js");
 const config = require("./config");
 const roastService = require("./services/roastService");
 const modelService = require("./services/modelService");
+
+// Create Express app
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "healthy" });
+});
+
+// Start HTTP server
+const server = app.listen(PORT, () => {
+  console.log(`HTTP server running on port ${PORT}`);
+});
 
 // Enhanced logger function
 function log(message) {
@@ -9,6 +24,7 @@ function log(message) {
   console.log(`[${timestamp}] ${message}`);
 }
 
+// Initialize Discord client after HTTP server is ready
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -212,4 +228,31 @@ client.on("messageCreate", async (message) => {
   }
 });
 
-client.login(config.discord.token);
+client
+  .login(config.discord.token)
+  .then(() => {
+    console.log("Discord client logged in successfully");
+  })
+  .catch((err) => {
+    console.error("Failed to login to Discord:", err);
+    process.exit(1);
+  });
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log("SIGTERM received. Shutting down gracefully...");
+  client.destroy();
+  server.close(() => {
+    console.log("HTTP server closed");
+    process.exit(0);
+  });
+});
+
+process.on("SIGINT", () => {
+  console.log("SIGINT received. Shutting down gracefully...");
+  client.destroy();
+  server.close(() => {
+    console.log("HTTP server closed");
+    process.exit(0);
+  });
+});

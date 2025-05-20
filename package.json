@@ -1,16 +1,23 @@
 {
   "name": "roaster",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js"
+    "start": "nodemon src/index.js",
+    "dev": "nodemon src/index.js",
+    "prod": "pm2 start src/index.js --name roaster --watch"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Discord roast bot",
   "dependencies": {
+    "express": "^4.18.2",
+    "pm2": "^5.3.1",
     "@discordjs/builders": "^1.11.2",
     "@discordjs/rest": "^2.5.0",
     "@google-cloud/local-auth": "^3.0.1",
