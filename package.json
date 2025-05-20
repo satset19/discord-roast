@@ -16,8 +16,6 @@
   "license": "ISC",
   "description": "Discord roast bot",
   "dependencies": {
-    "express": "^4.18.2",
-    "pm2": "^5.3.1",
     "@discordjs/builders": "^1.11.2",
     "@discordjs/rest": "^2.5.0",
     "@google-cloud/local-auth": "^3.0.1",
@@ -25,8 +23,11 @@
     "discord-api-types": "^0.38.8",
     "discord.js": "^14.19.3",
     "dotenv": "^16.5.0",
+    "express": "^4.18.2",
     "google-auth-library": "^9.15.1",
     "google-spreadsheet": "^4.1.4",
-    "openai": "^4.100.0"
+    "nodemon": "^3.1.10",
+    "openai": "^4.100.0",
+    "pm2": "^5.3.1"
   }
 }
