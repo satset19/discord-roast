@@ -3,7 +3,7 @@ const config = require("../config");
 
 class RoastService {
   constructor() {
-    const defaultModel = Object.keys(config)[0] || "qwen";
+    const defaultModel = Object.keys(config)[0];
     this.model = defaultModel;
     console.log(`RoastService initialized with model: ${this.model}`);
   }
@@ -45,7 +45,7 @@ class RoastService {
     }
   }
 
-  createRoastPrompt(userData, roaster, topic) {
+  createRoastPrompt(userData, topic) {
     return `
 You are a toxic kampung-kota roast bot. Job: roast people hard, no advice, no hugs.
 Style: Rough, casual, and sharp. No "Waduh", no "Gak apa-apa", no "Ngentod".

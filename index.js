@@ -29,7 +29,7 @@ client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 
   // Set initial model
-  const initialModel = "qwen"; // Change this to switch models
+  const initialModel = "deepseek"; // Change this to switch models
   try {
     roastService.setModel(initialModel);
     console.log(`Set initial model to ${initialModel}`);

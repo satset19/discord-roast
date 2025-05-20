@@ -1,7 +1,9 @@
+require("dotenv").config();
+
 module.exports = {
   discord: {
-    token: process.env.DISCORD_TOKEN,
-    clientId: process.env.CLIENT_ID,
+    token: process.env.DISCORD_TOKEN || "",
+    clientId: process.env.CLIENT_ID || "",
   },
   deepseek: {
     apiKey: process.env.DEEPSEEK_API_KEY,
@@ -9,11 +11,9 @@ module.exports = {
     model: "deepseek-chat",
     temperature: 0.9,
   },
-  qwen: {
-    apiKey: process.env.QWEN_API_KEY,
-    baseURL: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
-    model: "qwen-max",
-    temperature: 0.9,
-    stream: true,
+  googleSheets: {
+    spreadsheetId: process.env.GOOGLE_SHEET_ID,
+    apiKey: process.env.GOOGLE_API_KEY,
+    guildsSheet: "Guilds",
   },
 };
