@@ -5,7 +5,7 @@ const {
   Partials,
 } = require("discord.js");
 const { REST } = require("@discordjs/rest");
-const { Routes } = require("discord-api-types/v9");
+// const { Routes } = require("discord-api-types/v9");
 require("dotenv").config();
 const roastService = require("./src/services/roastService");
 
@@ -21,7 +21,6 @@ const client = new Client({
 
 const TOKEN = process.env.DISCORD_TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
-// console.log("Starting bot...", TOKEN, CLIENT_ID);
 
 // Removed commandLoader as it's no longer needed
 
