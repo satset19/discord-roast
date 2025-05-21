@@ -1,0 +1,12 @@
+name: roaster-bot
+services:
+  - name: roaster-service
+    environment:
+      - PORT=8000
+      - DISCORD_TOKEN=${DISCORD_TOKEN} # pakai secret environment variable
+    build:
+      baseImage: node:18
+      buildCommand: npm install
+      runCommand: npm run prod
+    ports:
+      - port: 8000
