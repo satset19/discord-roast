@@ -94,7 +94,7 @@ client.on("ready", () => {
   client.user.setPresence({
     activities: [
       {
-        name: "Only Fans",
+        name: "Only Fans 😻",
         type: ActivityType.Streaming, // Listening to help
       },
     ],
