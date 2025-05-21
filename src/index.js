@@ -84,6 +84,8 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildPresences, // INI WAJIB
+    GatewayIntentBits.MessageContent,
   ],
 });
 
@@ -160,7 +162,7 @@ client.on("interactionCreate", async (interaction) => {
       "Failed to fetch user data. Please try again later."
     );
   }
-
+  // console.log(member.presence?.activities);
   const userData = {
     username: member.user.username,
     activities: member.presence?.activities?.map((a) => a.name) || [],
@@ -173,6 +175,7 @@ client.on("interactionCreate", async (interaction) => {
   };
 
   try {
+    // Defer reply immediately to ensure we can edit it later
     await interaction.deferReply();
 
     const topic =
@@ -212,6 +215,7 @@ client.on("interactionCreate", async (interaction) => {
     );
   } catch (error) {
     log(`❌ Command error: ${error.message}`);
+    // We can safely edit here since we deferred earlier
     await interaction.editReply(
       "Failed to generate roast. Please try again later."
     );
