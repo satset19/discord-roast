@@ -22,7 +22,7 @@ jobs:
         run: npm ci
 
       - name: Install Koyeb CLI
-        uses: koyeb/actions/setup@v1
+        uses: koyeb/actions@v1
         with:
           version: latest
 
