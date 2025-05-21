@@ -28,13 +28,3 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: flyctl deploy --remote-only --access-token "$FLY_API_TOKEN"
-
-      - name: Install Koyeb CLI
-        uses: koyeb/setup-cli@main
-        with:
-          version: latest
-
-      - name: Deploy to Koyeb
-        env:
-          KOYEB_TOKEN: ${{ secrets.KOYEB_TOKEN }}
-        run: koyeb service redeploy discord-roast --token "$KOYEB_TOKEN" --app gentle-maryann
