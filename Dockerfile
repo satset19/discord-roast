@@ -23,7 +23,12 @@ FROM base AS build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    node-gyp \
+    pkg-config \
+    python-is-python3 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install node modules
 COPY --chown=appuser:appuser package-lock.json package.json ./
@@ -38,27 +43,21 @@ FROM base
 # Copy built application
 COPY --chown=appuser:appuser --from=build /app /app
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s \
-    CMD curl -f http://localhost:8000/health || exit 1
-
-# Install required system dependencies
+# Install required system dependencies and tini for signal handling
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Use tini as init process for proper signal handling
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
     tini \
     && rm -rf /var/lib/apt/lists/*
+
+# Use tini as init process
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Health check with retries
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD curl -f https://gentle-maryann-satset19-66462aec.koyeb.app/src/health || exit 1
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 8000
-CMD [ "npm", "start" ]
+CMD ["pm2-runtime", "src/index.js", "--name", "roaster", "--watch"]
+
