@@ -94,8 +94,8 @@ client.on("ready", () => {
   client.user.setPresence({
     activities: [
       {
-        name: "Only Fans 😻",
-        type: ActivityType.Streaming, // Listening to help
+        name: "Victim",
+        type: ActivityType.Playing, // Listening to help
       },
     ],
     status: "online",
