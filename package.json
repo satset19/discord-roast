@@ -5,8 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "prod": "pm2 start src/index.js --name roaster --watch"
+    "dev": "nodemon src/index.js"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -27,7 +26,6 @@
     "google-auth-library": "^9.15.1",
     "google-spreadsheet": "^4.1.4",
     "nodemon": "^3.1.10",
-    "openai": "^4.100.0",
-    "pm2": "^5.3.1"
+    "openai": "^4.100.0"
   }
 }
