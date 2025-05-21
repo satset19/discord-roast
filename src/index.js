@@ -3,7 +3,7 @@ const { Client, GatewayIntentBits } = require("discord.js");
 const config = require("./config");
 const roastService = require("./services/roastService");
 const modelService = require("./services/modelService");
-
+//okeokeoek
 // Create Express app
 const app = express();
 const PORT = process.env.PORT || 8000;
