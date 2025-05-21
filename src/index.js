@@ -1,5 +1,5 @@
 const express = require("express");
-const { Client, GatewayIntentBits } = require("discord.js");
+const { Client, GatewayIntentBits, ActivityType } = require("discord.js");
 const config = require("./config");
 const roastService = require("./services/roastService");
 const modelService = require("./services/modelService");
@@ -91,6 +91,15 @@ const client = new Client({
 
 // Setup Discord event listeners right after initialization
 client.on("ready", () => {
+  client.user.setPresence({
+    activities: [
+      {
+        name: "Only Fans",
+        type: ActivityType.Streaming, // Listening to help
+      },
+    ],
+    status: "online",
+  });
   startupState.discordReady = true;
   console.log("Discord client ready");
   log(`=== BOT STARTED ===`);
