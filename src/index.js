@@ -24,21 +24,64 @@ const server = app.listen(PORT, () => {
   console.log(`HTTP server running on port ${PORT}`);
 });
 
-// Add startup delay to ensure proper initialization
-let isReady = false;
-setTimeout(() => {
-  isReady = true;
-  console.log("Application fully initialized");
-}, 5000);
+// Startup state tracking
+let startupState = {
+  isReady: false,
+  httpReady: false,
+  discordReady: false,
+  startupTime: Date.now(),
+};
 
-// Enhanced health check that verifies Discord connection
+// Extended initialization timeout (2 minutes)
+const MAX_STARTUP_TIME = 120000;
+
+// Health check with detailed status
 app.get("/health", (req, res) => {
-  if (isReady && client.isReady()) {
-    res.status(200).json({ status: "healthy", discord: "connected" });
+  const uptime = Date.now() - startupState.startupTime;
+  const status = {
+    status: startupState.isReady ? "healthy" : "initializing",
+    uptime: `${Math.floor(uptime / 1000)}s`,
+    components: {
+      http: startupState.httpReady,
+      discord: startupState.discordReady,
+    },
+  };
+
+  if (startupState.isReady) {
+    res.status(200).json(status);
+  } else if (uptime > MAX_STARTUP_TIME) {
+    res.status(500).json({
+      ...status,
+      error: "Startup timeout exceeded",
+    });
   } else {
-    res.status(503).json({ status: "initializing", discord: "connecting" });
+    res.status(503).json(status);
   }
 });
+
+// Mark HTTP as ready when server starts
+server.on("listening", () => {
+  startupState.httpReady = true;
+  console.log("HTTP server ready");
+});
+
+// Mark Discord as ready when connected
+client.on("ready", () => {
+  startupState.discordReady = true;
+  console.log("Discord client ready");
+});
+
+// Final readiness check
+setInterval(() => {
+  if (
+    !startupState.isReady &&
+    startupState.httpReady &&
+    startupState.discordReady
+  ) {
+    startupState.isReady = true;
+    console.log("Application fully initialized");
+  }
+}, 5000);
 
 // Enhanced logger function
 function log(message) {
