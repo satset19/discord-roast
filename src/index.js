@@ -6,12 +6,7 @@ const modelService = require("./services/modelService");
 
 // Create Express app
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Health check endpoint
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "healthy" });
-});
+const PORT = process.env.PORT || 8000;
 
 // Verify required environment variables
 if (!process.env.DISCORD_TOKEN) {
@@ -35,7 +30,31 @@ let startupState = {
 // Extended initialization timeout (2 minutes)
 const MAX_STARTUP_TIME = 120000;
 
-// Health check with detailed status
+// Mark HTTP as ready when server starts
+server.on("listening", () => {
+  startupState.httpReady = true;
+  console.log("HTTP server ready");
+});
+
+// Final readiness check
+setInterval(() => {
+  if (
+    !startupState.isReady &&
+    startupState.httpReady &&
+    startupState.discordReady
+  ) {
+    startupState.isReady = true;
+    console.log("Application fully initialized");
+  }
+}, 5000);
+
+// Enhanced logger function
+function log(message) {
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] ${message}`);
+}
+
+// Setup health check endpoint after client initialization
 app.get("/health", (req, res) => {
   const uptime = Date.now() - startupState.startupTime;
   const status = {
@@ -59,37 +78,7 @@ app.get("/health", (req, res) => {
   }
 });
 
-// Mark HTTP as ready when server starts
-server.on("listening", () => {
-  startupState.httpReady = true;
-  console.log("HTTP server ready");
-});
-
-// Mark Discord as ready when connected
-client.on("ready", () => {
-  startupState.discordReady = true;
-  console.log("Discord client ready");
-});
-
-// Final readiness check
-setInterval(() => {
-  if (
-    !startupState.isReady &&
-    startupState.httpReady &&
-    startupState.discordReady
-  ) {
-    startupState.isReady = true;
-    console.log("Application fully initialized");
-  }
-}, 5000);
-
-// Enhanced logger function
-function log(message) {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] ${message}`);
-}
-
-// Initialize Discord client after HTTP server is ready
+// Initialize Discord client first
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -98,9 +87,10 @@ const client = new Client({
   ],
 });
 
-// Commands are now loaded globally via deploy-commands.js
-
+// Setup Discord event listeners right after initialization
 client.on("ready", () => {
+  startupState.discordReady = true;
+  console.log("Discord client ready");
   log(`=== BOT STARTED ===`);
   log(`Logged in as ${client.user.tag}`);
   log(`Guild count: ${client.guilds.cache.size}`);

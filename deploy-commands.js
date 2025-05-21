@@ -69,7 +69,30 @@ async function deployCommands(targetGuildId = null) {
 
 module.exports = { deployCommands };
 
+// Generate invite URL
+function generateInviteUrl() {
+  const permissions = [
+    "APPLICATION_COMMANDS",
+    "SEND_MESSAGES",
+    "VIEW_CHANNEL",
+    "MANAGE_NICKNAMES",
+    "CHANGE_NICKNAME",
+    "ATTACH_FILES",
+  ];
+  const scopes = ["bot", "applications.commands"];
+  const clientId = process.env.CLIENT_ID;
+
+  return `https://discord.com/api/oauth2/authorize?client_id=${clientId}&permissions=${permissions.join(
+    "%20"
+  )}&scope=${scopes.join("%20")}`;
+}
+
 // Only auto-run if executed directly
 if (require.main === module) {
-  deployCommands();
+  if (process.argv.includes("--generate-invite")) {
+    console.log("Invite URL with required permissions:");
+    console.log(generateInviteUrl());
+  } else {
+    deployCommands();
+  }
 }

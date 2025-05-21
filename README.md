@@ -107,4 +107,4 @@ Returns:
 - 503 when initializing
 
 ## Warning
-This bot uses edgy humor and sarcasm. Use at your own discretion.
+This bot uses edgy humor and a bit sarcasm. Use at your own discretion.

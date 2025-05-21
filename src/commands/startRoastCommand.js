@@ -12,8 +12,8 @@ module.exports = {
         .setRequired(true)
     ),
 
-  // console.log("Roast command interaction received:", interaction);
   async execute(interaction) {
+    console.log("Roast command interaction received:", interaction);
     const target = interaction.options.getUser("target");
     const member = await interaction.guild.members.fetch(target.id);
     // console.log("Roast command interaction received:", member.presence);
@@ -30,7 +30,14 @@ module.exports = {
       ),
     };
 
-    const roast = await roastService.generateRoast(userData);
-    await interaction.reply(`${target}`);
+    try {
+      const { text: roast } = await roastService.generateRoast(userData);
+      await interaction.reply(`<@${target.id}> ${roast}`);
+    } catch (error) {
+      console.error("Error generating roast:", error);
+      await interaction.reply(
+        "Failed to generate roast. Please try again later."
+      );
+    }
   },
 };
