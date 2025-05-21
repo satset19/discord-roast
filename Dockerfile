@@ -42,6 +42,23 @@ COPY --chown=appuser:appuser --from=build /app /app
 HEALTHCHECK --interval=30s --timeout=3s \
     CMD curl -f http://localhost:8000/health || exit 1
 
+# Install required system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Use tini as init process for proper signal handling
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    tini \
+    && rm -rf /var/lib/apt/lists/*
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+# Health check with retries
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 8000
-CMD [ "node", "src/index.js" ]
+CMD [ "npm", "start" ]
