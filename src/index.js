@@ -3,6 +3,7 @@ const { Client, GatewayIntentBits, ActivityType } = require("discord.js");
 const config = require("./config");
 const roastService = require("./services/roastService");
 const modelService = require("./services/modelService");
+const contextReplyService = require("./services/contextReplyService");
 //okeokeoek
 // Create Express app
 const app = express();
@@ -233,66 +234,21 @@ client.on("interactionCreate", async (interaction) => {
 
 client.on("messageCreate", async (message) => {
   log(`Message received from ${message.author.tag}`);
-  // Ignore messages from bots
-  if (message.author.bot) return;
+  // Ignore messages from bots, webhooks, or system messages
+  if (message.author.bot || message.webhookId || message.system) return;
 
   try {
-    // Debug log full message content
+    // Debug log message details
     log(`DEBUG: Full message content - ${message.content}`);
     log(`DEBUG: Mentions count - ${message.mentions.users.size}`);
 
-    // Check all user mentions in message
-    if (message.mentions.users.size > 0) {
-      const mentionedUsers = message.mentions.users.map((user) => ({
-        id: user.id,
-        tag: user.tag,
-        isBot: user.bot,
-      }));
-      log(`MENTIONS DETAIL:`, JSON.stringify(mentionedUsers, null, 2));
-
-      // Handle bot mentions
-      const botWasMentioned = message.mentions.has(client.user.id);
-      log(`DEBUG: Bot mentioned? ${botWasMentioned}`);
-
-      if (botWasMentioned) {
-        const guildInfo = message.guild
-          ? `Guild: ${message.guild.name} (${message.guild.id})`
-          : "DM";
-        log(`BOT MENTION DETAIL: ${guildInfo} by ${message.author.tag}`);
-        log(`FULL MESSAGE: ${message.content}`);
-
-        const content = message.content
-          .replace(`<@${message.guild.id}>`, "")
-          .trim();
-
-        const [target, ...topicParts] = content.split(" ");
-        const topic = target.includes("<@")
-          ? topicParts.join(" ")
-          : message.content;
-
-        console.log("Topic:", topic);
-        console.log("Target:", message.author.tag);
-
-        const userData = {
-          username: target.startsWith("@") ? target : message.author.username,
-          activities: [],
-          roles: [],
-          daysInServer: Math.floor(
-            (Date.now() - message.author.createdAt) / (1000 * 60 * 60 * 24)
-          ),
-        };
-
-        const { text: roastText } = await roastService.generateRoast(
-          userData,
-          message.author.tag,
-          topic,
-          botWasMentioned
-        );
-        return await message.reply(roastText);
-      }
+    // Delegate contextual reply handling (mentions and replies to bot)
+    const handled = await contextReplyService.handleMessage(message, client);
+    if (handled) {
+      log(`Contextual reply handled for ${message.author.tag}`);
     }
   } catch (error) {
-    log(`❌ Message handling error: ${error.message}`);
+    log(`Message handling error: ${error.message}`);
   }
 });
 

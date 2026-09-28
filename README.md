@@ -4,6 +4,7 @@ A toxic kampung-kota style roast bot that roasts users hard with no comfort or a
 
 ## Features
 
+- Contextual replies on mention and reply (randomized between text, Giphy sticker, or Discord reaction)
 - Toxic, rough and sharp roasts in 60% English, 40% Jaksel-style
 - Roasts based on:
   - Username and avatar
@@ -16,7 +17,19 @@ A toxic kampung-kota style roast bot that roasts users hard with no comfort or a
 - Google Sheets integration for guild tracking
 - Health check endpoint for deployment monitoring
 
-## Commands
+## Documentation
+
+Full documentation is available in the docs directory:
+- docs/contextual-reply-feature.md: Detailed overview of contextual replies, triggers, Giphy stickers, reactions, and fallbacks.
+- docs/environment-variables.md: Comprehensive reference of required and optional environment variables.
+
+## Commands and Interactions
+
+### Mentions and Replies
+When a user tags the bot (@bot) or replies to the bot's message in any channel, the bot contextually analyzes the conversation and randomly responds with one of:
+1. Contextual text reply
+2. Contextual Giphy animated sticker
+3. Contextual Discord emoji reaction
 
 ### `/roastme`
 Roasts yourself with random insults based on your profile.
@@ -61,6 +74,11 @@ GOOGLE_PRIVATE_KEY=your_private_key
 
 # Optional
 PORT=3000 # For health checks
+GIPHY_API_KEY=your_giphy_api_key # For animated sticker responses
+GIPHY_RATING=pg-13
+REPLY_PROBABILITY_TEXT=0.33
+REPLY_PROBABILITY_STICKER=0.33
+REPLY_PROBABILITY_REACTION=0.34
 ```
 
 ### Register Commands

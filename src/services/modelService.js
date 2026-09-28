@@ -9,6 +9,10 @@ class ModelService {
         client: axios,
         config: config.deepseek,
       },
+      proxycli: {
+        client: axios,
+        config: config.proxycli,
+      },
     };
   }
 
