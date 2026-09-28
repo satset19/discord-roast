@@ -65,6 +65,7 @@ class ContextReplyService {
   constructor() {
     this.analysisModel = "proxycli";
     this.replyModel = "proxycli";
+    this.curseModel = "deepseek";
   }
 
   async extractConversationContext(message, client) {
@@ -237,7 +238,7 @@ class ContextReplyService {
       if (isAngry) {
         console.log(`[ContextReply] Generating curse response via deepseek`);
         textReply = await modelService.generateResponse(
-          this.analysisModel,
+          this.curseModel,
           createCursePrompt({ userMessage: context.cleanContent, username: context.username })
         );
       } else {
