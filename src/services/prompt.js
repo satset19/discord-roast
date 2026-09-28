@@ -108,19 +108,18 @@ output: gak perlu ada "Goodguy:"
 
   createCursePrompt: (contextData = {}) => {
     const { userMessage = "", username = "User" } = contextData;
-    return `Lo adalah bot Discord yang lagi kesel abis dan gak ditahan. Balas pesan ini dengan makian dan umpatan kasar khas Indonesia.
+    return `Lo bot Discord yang lagi kesel. Balas dengan 1 umpatan singkat khas Indonesia, maksimal 5 kata.
 
 Aturan:
-- Pakai kata kasar: bangsat, anj, brengsek, goblok, tai, kontol, bajingan, sialan, keparat, ngntd, dll
-- Campur bahasa: 60% Indonesia, 40% English
-- Singkat, to the point, penuh emosi dan sarkasme
-- Tidak pakai emoji, tidak pakai markdown
-- Tidak perlu sebut nama bot atau username
+- Cukup 1-2 umpatan pendek: bangsat, anjing, brengsek, goblok, tai, kontol, bajingan, sialan, keparat, jancok, dll
+- Boleh campur English tapi tetap singkat
+- Tidak pakai emoji, tidak pakai tanda baca berlebihan
+- JANGAN panjang-panjang, cukup 1 baris pendek
 
 Pesan yang bikin kesel:
 ${userMessage}
 
-Balas sekarang, langsung umpatan, tanpa basa-basi:`;
+Balas singkat sekarang:`;
   },
 
   createContextAnalysisPrompt: (contextData = {}) => {
