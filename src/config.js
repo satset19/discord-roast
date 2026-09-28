@@ -31,7 +31,7 @@ module.exports = {
   proxycli: {
     apiKey: getRequiredEnv("PROXYCLI_API_KEY"),
     endpoint: getOptionalEnv("PROXYCLI_ENDPOINT", "https://proxycli.besoksenin.web.id/v1/chat/completions"),
-    model: getOptionalEnv("PROXYCLI_MODEL", "claude-sonnet-4-6"),
+    model: getOptionalEnv("PROXYCLI_MODEL", "gemini-3.6-flash-high"),
     temperature: 0.7,
   },
   googleSheets: {

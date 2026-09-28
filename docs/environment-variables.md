@@ -89,5 +89,5 @@ These variables customize bot behavior and features. If omitted, sensible defaul
 
 10. PROXYCLI_MODEL
     - Type: String
-    - Default: "claude-sonnet-4-6"
+    - Default: "gemini-3.6-flash-high"
     - Description: Model name to use on the ProxyCLI endpoint.
