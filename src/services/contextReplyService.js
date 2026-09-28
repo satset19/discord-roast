@@ -48,6 +48,19 @@ function resolveEmoji(rawEmoji, emotion) {
 
 const ANGRY_EMOTIONS = ["salty", "angry", "burn", "mad", "kesel", "triggered", "furious", "pissed", "rage"];
 
+const UMPATAN_WORDS = [
+  "bangsat", "anjing", "anjir", "anjay", "brengsek", "goblok", "tai", "kontol",
+  "memek", "bajingan", "sialan", "keparat", "kampret", "jancok", "jancuk", "asu",
+  "celeng", "cok", "ngentod", "ngentot", "babi", "tolol", "bodoh", "idiot",
+  "setan", "iblis", "laknat", "kurang ajar", "fuck", "shit", "damn", "bitch",
+  "asshole", "bastard", "motherfucker",
+];
+
+function containsUmpatan(text) {
+  const lower = text.toLowerCase();
+  return UMPATAN_WORDS.some((w) => lower.includes(w));
+}
+
 class ContextReplyService {
   constructor() {
     this.analysisModel = "proxycli";
@@ -178,8 +191,9 @@ class ContextReplyService {
 
       const analysis = await this.analyzeContext(context);
 
-      const isAngry = ANGRY_EMOTIONS.some((e) => analysis.emotion.toLowerCase().includes(e));
-      console.log(`[ContextReply] Emotion: ${analysis.emotion} | Angry: ${isAngry}`);
+      const hasUmpatan = containsUmpatan(context.cleanContent);
+      const isAngry = hasUmpatan || ANGRY_EMOTIONS.some((e) => analysis.emotion.toLowerCase().includes(e));
+      console.log(`[ContextReply] Emotion: ${analysis.emotion} | Umpatan: ${hasUmpatan} | Angry: ${isAngry}`);
 
       if (modality === "sticker") {
         const stickerUrl = await giphyService.searchSticker(analysis.stickerQuery);
