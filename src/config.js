@@ -46,9 +46,9 @@ module.exports = {
   },
   contextReply: {
     probabilities: {
-      text: parseFloat(getOptionalEnv("REPLY_PROBABILITY_TEXT", "0.33")) || 0.33,
-      sticker: parseFloat(getOptionalEnv("REPLY_PROBABILITY_STICKER", "0.33")) || 0.33,
-      reaction: parseFloat(getOptionalEnv("REPLY_PROBABILITY_REACTION", "0.34")) || 0.34,
+      text: parseFloat(getOptionalEnv("REPLY_PROBABILITY_TEXT", "0.80")) || 0.80,
+      sticker: parseFloat(getOptionalEnv("REPLY_PROBABILITY_STICKER", "0.10")) || 0.10,
+      reaction: parseFloat(getOptionalEnv("REPLY_PROBABILITY_REACTION", "0.10")) || 0.10,
     },
   },
 };
