@@ -195,7 +195,12 @@ class ContextReplyService {
       const isAngry = hasUmpatan || ANGRY_EMOTIONS.some((e) => analysis.emotion.toLowerCase().includes(e));
       console.log(`[ContextReply] Emotion: ${analysis.emotion} | Umpatan: ${hasUmpatan} | Angry: ${isAngry}`);
 
-      if (modality === "sticker") {
+      const finalModality = isAngry
+        ? this.selectModality({ text: 0.5, sticker: 0.25, reaction: 0.25 }, giphyService.isAvailable())
+        : modality;
+      console.log(`[ContextReply] Final modality: ${finalModality} (angry: ${isAngry})`);
+
+      if (finalModality === "sticker") {
         const stickerUrl = await giphyService.searchSticker(analysis.stickerQuery);
         if (stickerUrl) {
           try {
@@ -215,7 +220,7 @@ class ContextReplyService {
         return true;
       }
 
-      if (modality === "reaction") {
+      if (finalModality === "reaction") {
         try {
           await message.react(analysis.emoji);
           console.log(`[ContextReply] Reacted with emoji: ${analysis.emoji}`);
