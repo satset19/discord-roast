@@ -196,7 +196,7 @@ class ContextReplyService {
       console.log(`[ContextReply] Emotion: ${analysis.emotion} | Umpatan: ${hasUmpatan} | Angry: ${isAngry}`);
 
       const finalModality = isAngry
-        ? this.selectModality({ text: 0.5, sticker: 0.25, reaction: 0.25 }, giphyService.isAvailable())
+        ? this.selectModality({ text: 0.9, sticker: 0.05, reaction: 0.05 }, giphyService.isAvailable())
         : modality;
       console.log(`[ContextReply] Final modality: ${finalModality} (angry: ${isAngry})`);
 
